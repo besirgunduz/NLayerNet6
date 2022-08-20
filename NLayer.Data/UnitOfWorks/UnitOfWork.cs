@@ -23,7 +23,7 @@ namespace NLayer.Data.UnitOfWorks
 
         public async Task CommitAsync()
         {
-            return await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
     }
 }
