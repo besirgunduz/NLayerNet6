@@ -13,6 +13,11 @@ namespace NLayer.API.Controllers
         private readonly IMapper _mapper;
         private readonly IService<Product> _service;
 
+        public ProductsController(IMapper mapper, IService<Product> service)
+        {
+            _mapper = mapper;
+            _service = service;
+        }
 
         [HttpGet]
         public async Task<IActionResult> All()
@@ -31,11 +36,11 @@ namespace NLayer.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Save(ProductDto productDto)
+        public async Task<IActionResult> Save(ProductSaveDto productSaveDto)
         {
-            var product = await _service.AddAsync(_mapper.Map<Product>(productDto));
-            var productsDto = _mapper.Map<ProductDto>(product);
-            return CreateActionResult(CustomResponseDto<ProductDto>.Success(201, productsDto));
+            var product = await _service.AddAsync(_mapper.Map<Product>(productSaveDto));
+            var productsDto = _mapper.Map<ProductSaveDto>(product);
+            return CreateActionResult(CustomResponseDto<ProductSaveDto>.Success(201, productsDto));
         }
 
         [HttpPut]
