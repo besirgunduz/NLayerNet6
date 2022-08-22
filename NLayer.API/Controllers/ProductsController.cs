@@ -6,20 +6,24 @@ using NLayer.Core.Services;
 
 namespace NLayer.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class ProductsController : CustomBaseController
     {
         private readonly IMapper _mapper;
-        private readonly IService<Product> _service;
+        private readonly IProductService _service;
 
-        public ProductsController(IMapper mapper, IService<Product> service)
+        public ProductsController(IMapper mapper, IProductService productService)
         {
             _mapper = mapper;
-            _service = service;
+            _service = productService;
         }
 
-        [HttpGet]
+        [HttpGet("GetProductsWithCategory")]
+        public async Task<IActionResult> GetProductsWithCategory()
+        {
+            return CreateActionResult(await _service.GetProductsWithCategory());
+        }
+
+        [HttpGet("All")]
         public async Task<IActionResult> All()
         {
             var products = await _service.GetAllAsync();
@@ -35,7 +39,7 @@ namespace NLayer.API.Controllers
             return CreateActionResult(CustomResponseDto<ProductDto>.Success(200, productsDto));
         }
 
-        [HttpPost]
+        [HttpPost("Save")]
         public async Task<IActionResult> Save(ProductSaveDto productSaveDto)
         {
             var product = await _service.AddAsync(_mapper.Map<Product>(productSaveDto));
@@ -43,14 +47,14 @@ namespace NLayer.API.Controllers
             return CreateActionResult(CustomResponseDto<ProductSaveDto>.Success(201, productsDto));
         }
 
-        [HttpPut]
+        [HttpPut("Update")]
         public async Task<IActionResult> Update(ProductUpdateDto productUpdateDto)
         {
             await _service.UpdateAsync(_mapper.Map<Product>(productUpdateDto));
             return CreateActionResult(CustomResponseDto<NoContentDto>.Success(204));
         }
 
-        [HttpDelete]
+        [HttpDelete("Remove")]
         public async Task<IActionResult> Remove(int id)
         {
             var product = await _service.GetByIdAsync(id);
